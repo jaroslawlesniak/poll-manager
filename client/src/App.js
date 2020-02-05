@@ -1,10 +1,25 @@
 import React from 'react';
-import './App.css';
+import './App.scss';
+import {
+    HashRouter as Router,
+    Route,
+    Link
+} from 'react-router-dom';
 
 function App() {
-  return (
-    <div>Test</div>
-  );
+    return (
+        <Router>
+            <Route path="/">
+
+            </Route>
+            <Route path="/poll">
+
+            </Route>
+            <Route path="/admin">
+
+            </Route>
+        </Router>
+    );
 }
 
 export default App;
