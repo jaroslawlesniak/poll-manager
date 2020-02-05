@@ -1,3 +1,36 @@
 body {
   background-color: #fff;
 }
+
+.login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+  background-color: #000;
+
+  > div {
+    width: 800px;
+    max-width: 100%;
+    background-color: #fff;
+    text-align: center;
+    padding: 50px;
+
+    button {
+        margin-top: 50px;
+        text-transform: uppercase;
+    }
+
+    h1 {
+        font-size: 20px;
+        border-bottom: 1px dashed #ddd;
+        padding-bottom: 50px;
+        text-transform: uppercase;
+    }
+
+    > span {
+        margin-top: 50px;
+    }
+  }
+}
