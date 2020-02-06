@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { Input, Button, Icon } from 'antd';
 import { useHistory } from "react-router-dom";
 
-export default function Login({saveUserNameToDatabase}) {
+export default function Login({saveUserState}) {
     const [userName, setUserName] = useState("");
     const history = useHistory();
 
     const saveUserName = () => {
         if(userName !== "") {
-            saveUserNameToDatabase(userName);
+            saveUserState(userName);
             history.push("/dashboard");
         } else {
             alert("Musisz wpisać nazwę użytkownika");

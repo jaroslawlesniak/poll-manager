@@ -7,22 +7,26 @@ import {
 } from 'react-router-dom';
 import Login from './components/login/login';
 import Dashboard from './components/dashboard/dashboard';
+import API from './libs/api';
 
 export default class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            userName: "test"
+            user: {
+                name: 'default',
+                id: 1
+            }
         }
     }
     render() {
         return (
             <Router>
                 <Route exact path="/">
-                    <Login saveUserNameToDatabase={(e) => this.saveUserNameToDatabase(e)} />
+                    <Login saveUserState={(userName) => this.saveUserStateAndGetUserID(userName)} />
                 </Route>
                 <Route path="/dashboard">
-                    <Dashboard userName={this.state.userName} />
+                    <Dashboard user={this.state.user} />
                 </Route>
                 <Route path="/poll/:id">
                     <h2>Single poll</h2>
@@ -34,7 +38,22 @@ export default class App extends React.Component {
         );
     }
 
-    saveUserNameToDatabase(userName) {
-        this.setState({ userName });
+    saveUserStateAndGetUserID(userName) {
+        fetch(API.URL + `/user/${userName}`, {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        }).then((data) => data.json())
+        .then(data => {
+            this.setState({
+                user: {
+                    name: userName,
+                    id: data.id
+                }
+            });
+        });
+        
     }
 }
