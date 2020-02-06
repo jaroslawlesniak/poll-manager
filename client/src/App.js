@@ -8,6 +8,7 @@ import {
 import Login from './components/login/login';
 import Dashboard from './components/dashboard/dashboard';
 import API from './libs/api';
+import Admin from './components/admin/admin';
 
 export default class App extends React.Component {
     constructor(props) {
@@ -32,7 +33,7 @@ export default class App extends React.Component {
                     <h2>Single poll</h2>
                 </Route>
                 <Route path="/admin">
-                    <h2>Admin</h2>
+                    <Admin user={this.state.user} />
                 </Route>
             </Router>
         );
@@ -46,14 +47,14 @@ export default class App extends React.Component {
                 'Content-Type': 'application/json'
             },
         }).then((data) => data.json())
-        .then(data => {
-            this.setState({
-                user: {
-                    name: userName,
-                    id: data.id
-                }
+            .then(data => {
+                this.setState({
+                    user: {
+                        name: userName,
+                        id: data.id
+                    }
+                });
             });
-        });
-        
+
     }
 }
