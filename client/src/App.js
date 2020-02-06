@@ -41,11 +41,7 @@ export default class App extends React.Component {
 
     saveUserStateAndGetUserID(userName) {
         fetch(API.URL + `/user/${userName}`, {
-            method: 'GET',
-            mode: 'cors',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            method: 'GET'
         }).then((data) => data.json())
             .then(data => {
                 this.setState({
