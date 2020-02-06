@@ -66,6 +66,44 @@ app.delete('/poll/:id', (request, response) => {
     })
 });
 
+app.get('/fields/:id', (request, response) => {
+    connection.query(`SELECT ID, PollID, Title, Type, AdditionalInfo FROM fields WHERE PollID = ${request.params.id}`, (err, rows, fields) => {
+        response.send({ "fields": rows });
+    });
+});
+
+app.put('/field', (request, response) => {
+    connection.query(`INSERT INTO fields VALUES (null, ${request.body.pollID}, '${request.body.title}', ${request.body.type}, '${request.body.additionalInfo}')`, (err, result) => {
+        response.send({
+            id: result.insertId,
+            pollID: request.body.pollID,
+            title: "",
+            additionalInfo: "",
+            type: parseInt(request.body.type)
+        });
+    });
+});
+
+app.delete('/field/:id', (request, response) => {
+    connection.query(`DELETE FROM fields WHERE ID = ${parseInt(request.params.id)}`, (err, result) => {
+        if (result.affectedRows === 1) {
+            response.send({ "deleted": true });
+        } else {
+            response.send({ "deleted": false });
+        }
+    })
+});
+
+app.post('/field/:id', (request, response) => {
+    connection.query(`UPDATE fields SET Title = '${request.body.title}', AdditionalInfo = '${request.body.additionalInfo}' WHERE ID = ${parseInt(request.params.id)}`, (err, result) => {
+        if (result.affectedRows === 1) {
+            response.send({ "updated": true });
+        } else {
+            response.send({ "updated": false });
+        }
+    })
+});
+
 app.listen(8080, () => {
     console.log("Server started!");
 });
