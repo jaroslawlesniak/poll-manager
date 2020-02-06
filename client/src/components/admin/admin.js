@@ -5,7 +5,7 @@ import {
     Link
 } from 'react-router-dom';
 import API from '../../libs/api';
-import Field from './field';
+import Question from './question';
 
 
 const { SubMenu } = Menu;
@@ -18,7 +18,7 @@ export default class Admin extends Component {
             polls: [],
             selectedPoll: {},
             selectedID: -1,
-            fields: []
+            questions: []
         }
     }
 
@@ -35,11 +35,11 @@ export default class Admin extends Component {
                     <h1>Nazwa ankiety</h1>
                     <Input className="header" value={this.state.selectedPoll.Title} onChange={(event => this.handeTitleChange(event))} />
                     <h2>Pytania</h2>
-                    {this.state.fields.map((value, key) => (
-                        <Field key={key} field={value} deleteField={(id) => this.deleteField(key, id)}/>
+                    {this.state.questions.map((value, key) => (
+                        <Question key={key} question={value} deleteQuestion={(id) => this.deleteQuestion(key, id)} />
                     ))}
                     <div className="list">
-                        <Radio.Group onChange={(e) => this.addNewField(e.target.value)}>
+                        <Radio.Group onChange={(e) => this.addNewQuestion(e.target.value)}>
                             <Tooltip title="Dodaj pytanie">
                                 <Radio.Button><Icon type="plus" /></Radio.Button>
                             </Tooltip>
@@ -102,39 +102,39 @@ export default class Admin extends Component {
             selectedPoll: this.state.polls[id],
             selectedID: id
         });
-        fetch(API.URL + `/fields/${this.state.selectedPoll.ID}`, {
+        fetch(API.URL + `/questions/${this.state.selectedPoll.ID}`, {
             method: "GET"
         })
             .then(data => data.json())
             .then(data => {
                 this.setState({
-                    fields: data.fields
+                    questions: []
+                });
+                this.setState({
+                    questions: data.questions
                 });
             })
     }
 
     addNewPoll() {
-        const pollName = prompt("Podaj nazwę ankiety");
-        if (pollName === "") {
-            alert("Musisz podać nazwę");
-        } else if (pollName !== null) {
-            fetch(API.URL + "/poll", {
-                method: "PUT",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    title: pollName
-                })
+        const pollName = `Nowa ankieta #${this.state.polls.length + 1}`;
+        fetch(API.URL + "/poll", {
+            method: "PUT",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                title: pollName
             })
-                .then(data => data.json())
-                .then(data => {
-                    this.setState(prevState => ({
-                        polls: [...prevState.polls, { ID: data.id, Title: data.title }]
-                    }))
-                });
+        })
+            .then(data => data.json())
+            .then(data => {
+                this.setState(prevState => ({
+                    polls: [...prevState.polls, { ID: data.id, Title: data.title }]
+                }))
+                message.success("Dodano nową ankietę");
+            });
 
-        }
     }
 
     componentWillMount() {
@@ -216,14 +216,14 @@ export default class Admin extends Component {
                         polls,
                         selectedID: -1
                     });
-                    message.success("Usunięto");
+                    message.success("Usunięto ankietę");
                 }
             })
     }
 
-    addNewField(type) {
+    addNewQuestion(type) {
         if (type !== undefined) {
-            fetch(API.URL + `/field`, {
+            fetch(API.URL + `/question`, {
                 method: "PUT",
                 mode: "cors",
                 headers: {
@@ -237,26 +237,26 @@ export default class Admin extends Component {
                 })
             }).then(data => data.json()).then(data => {
                 this.setState(prevState => ({
-                    fields: [...prevState.fields, { ID: data.id, Title: data.title, Type: data.type, PollID: data.pollID, AdditionalInfo: "" }]
+                    questions: [...prevState.questions, { ID: data.id, Title: data.title, Type: data.type, PollID: data.pollID, AdditionalInfo: "" }]
                 }))
             })
         }
     }
 
-    deleteField(key, id) {
-        fetch(API.URL + `/field/${id}`, {
+    deleteQuestion(key, id) {
+        fetch(API.URL + `/question/${id}`, {
             method: "DELETE",
             mode: "cors"
         })
             .then(data => data.json())
             .then(data => {
                 if (data.deleted === true) {
-                    let fields = [...this.state.fields];
-                    fields.splice(key, 1);
+                    let questions = [...this.state.questions];
+                    questions.splice(key, 1);
                     this.setState({
-                        fields
+                        questions: questions
                     });
-                    message.success("Usunięto");
+                    message.success("Usunięto pytanie");
                 }
             })
     }

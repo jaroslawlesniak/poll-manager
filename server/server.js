@@ -36,7 +36,7 @@ app.get('/user/:user', (request, response) => {
 
 app.get('/polls', (request, response) => {
     connection.query("SELECT ID, Title FROM polls", (err, rows, fields) => {
-        response.send({ "polls": rows });
+        response.send({ "polls": rows || [] });
     });
 });
 
@@ -66,14 +66,14 @@ app.delete('/poll/:id', (request, response) => {
     })
 });
 
-app.get('/fields/:id', (request, response) => {
-    connection.query(`SELECT ID, PollID, Title, Type, AdditionalInfo FROM fields WHERE PollID = ${request.params.id}`, (err, rows, fields) => {
-        response.send({ "fields": rows });
+app.get('/questions/:id', (request, response) => {
+    connection.query(`SELECT ID, PollID, Title, Type, AdditionalInfo FROM questions WHERE PollID = ${request.params.id}`, (err, rows, fields) => {
+        response.send({ "questions": rows || [] });
     });
 });
 
-app.put('/field', (request, response) => {
-    connection.query(`INSERT INTO fields VALUES (null, ${request.body.pollID}, '${request.body.title}', ${request.body.type}, '${request.body.additionalInfo}')`, (err, result) => {
+app.put('/question', (request, response) => {
+    connection.query(`INSERT INTO questions VALUES (null, ${request.body.pollID}, '${request.body.title}', ${request.body.type}, '${request.body.additionalInfo}')`, (err, result) => {
         response.send({
             id: result.insertId,
             pollID: request.body.pollID,
@@ -84,8 +84,8 @@ app.put('/field', (request, response) => {
     });
 });
 
-app.delete('/field/:id', (request, response) => {
-    connection.query(`DELETE FROM fields WHERE ID = ${parseInt(request.params.id)}`, (err, result) => {
+app.delete('/question/:id', (request, response) => {
+    connection.query(`DELETE FROM questions WHERE ID = ${parseInt(request.params.id)}`, (err, result) => {
         if (result.affectedRows === 1) {
             response.send({ "deleted": true });
         } else {
@@ -94,8 +94,44 @@ app.delete('/field/:id', (request, response) => {
     })
 });
 
-app.post('/field/:id', (request, response) => {
-    connection.query(`UPDATE fields SET Title = '${request.body.title}', AdditionalInfo = '${request.body.additionalInfo}' WHERE ID = ${parseInt(request.params.id)}`, (err, result) => {
+app.post('/question/:id', (request, response) => {
+    connection.query(`UPDATE questions SET Title = '${request.body.title}', AdditionalInfo = '${request.body.additionalInfo}' WHERE ID = ${parseInt(request.params.id)}`, (err, result) => {
+        if (result.affectedRows === 1) {
+            response.send({ "updated": true });
+        } else {
+            response.send({ "updated": false });
+        }
+    })
+});
+
+app.get('/answers/:id', (request, response) => {
+    connection.query(`SELECT ID, QuestionID, Title FROM answers WHERE QuestionID = ${request.params.id}`, (err, rows, fields) => {
+        response.send({ "answers": rows || [] });
+    });
+});
+
+app.put('/answer', (request, response) => {
+    connection.query(`INSERT INTO answers VALUES (null, ${request.body.questionID}, '')`, (err, result) => {
+        response.send({
+            id: result.insertId,
+            questionID: request.body.questionID,
+            title: "",
+        });
+    });
+});
+
+app.delete('/answer/:id', (request, response) => {
+    connection.query(`DELETE FROM answers WHERE ID = ${parseInt(request.params.id)}`, (err, result) => {
+        if (result.affectedRows === 1) {
+            response.send({ "deleted": true });
+        } else {
+            response.send({ "deleted": false });
+        }
+    })
+});
+
+app.post('/answer/:id', (request, response) => {
+    connection.query(`UPDATE answers SET Title = '${request.body.title}' WHERE ID = ${parseInt(request.params.id)}`, (err, result) => {
         if (result.affectedRows === 1) {
             response.send({ "updated": true });
         } else {
