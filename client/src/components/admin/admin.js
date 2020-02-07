@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Menu, Icon, Layout, Button, PageHeader, Avatar, Input, Tooltip, message, Radio } from 'antd';
+import { Menu, Icon, Layout, Button, PageHeader, Input, Tooltip, message, Radio } from 'antd';
 import {
     HashRouter as Router,
     Link
@@ -79,9 +79,8 @@ export default class Admin extends Component {
                     <Content>
                         <PageHeader
                             ghost="false"
-                            title={<div><Avatar size={32} icon="user" /><span>{this.props.user.name}</span></div>}
                             extra={[
-                                <Link key={1} to="/dashboard">
+                                <Link key={1} to="/">
                                     <Button type="primary">Strona główna</Button>
                                 </Link>
                             ]}

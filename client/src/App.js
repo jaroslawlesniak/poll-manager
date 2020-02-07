@@ -5,52 +5,22 @@ import {
     HashRouter as Router,
     Route
 } from 'react-router-dom';
-import Login from './components/login/login';
 import Dashboard from './components/dashboard/dashboard';
-import API from './libs/api';
 import Admin from './components/admin/admin';
+import Poll from './components/dashboard/poll';
 
 export default class App extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            user: {
-                name: 'default',
-                id: 1
-            }
-        }
-    }
     render() {
         return (
             <Router>
                 <Route exact path="/">
-                    <Login saveUserState={(userName) => this.saveUserStateAndGetUserID(userName)} />
+                    <Dashboard />
                 </Route>
-                <Route path="/dashboard">
-                    <Dashboard user={this.state.user} />
-                </Route>
-                <Route path="/poll/:id">
-                    <h2>Single poll</h2>
-                </Route>
+                <Route path="/poll/:id/:title" component={Poll}/>
                 <Route path="/admin">
-                    <Admin user={this.state.user} />
+                    <Admin />
                 </Route>
             </Router>
         );
-    }
-
-    saveUserStateAndGetUserID(userName) {
-        fetch(API.URL + `/user/${userName}`, {
-            method: 'GET'
-        }).then((data) => data.json())
-            .then(data => {
-                this.setState({
-                    user: {
-                        name: userName,
-                        id: data.id
-                    }
-                });
-            });
-
     }
 }

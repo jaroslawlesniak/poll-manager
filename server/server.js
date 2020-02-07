@@ -22,18 +22,6 @@ let connection = mysql.createConnection({
     database: config.database
 });
 
-app.get('/user/:user', (request, response) => {
-    connection.query(`SELECT ID FROM users WHERE Name = '${request.params.user}'`, (err, rows, fields) => {
-        if (rows.length === 1) {
-            response.send({ "id": rows[0].ID });
-        } else {
-            connection.query(`INSERT INTO users VALUES (null, '${request.params.user}')`, (err, result) => {
-                response.send({ "id": result.insertId });
-            });
-        }
-    });
-});
-
 app.get('/polls', (request, response) => {
     connection.query("SELECT ID, Title FROM polls", (err, rows, fields) => {
         response.send({ "polls": rows || [] });
