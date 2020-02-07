@@ -4,7 +4,7 @@ import API from '../../libs/api';
 import Answer from './answer';
 
 
-export default function Question({ question, deleteQuestion }) {
+export default function Question({ question, deleteQuestion, updateQuestionState }) {
     const [title, setTitle] = useState(question.Title);
     const [additionalInfo, setAdditionalInfo] = useState(question.AdditionalInfo);
     const [answers, setAnswers] = useState([]);
@@ -27,6 +27,7 @@ export default function Question({ question, deleteQuestion }) {
                     message.success("Zapisano");
                 }
             })
+            updateQuestionState(title, additionalInfo);
     }
 
     useEffect(() => {

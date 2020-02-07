@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { PageHeader, Button, Tooltip } from 'antd';
+import { PageHeader, Button } from 'antd';
 import {
     HashRouter as Router,
     Link
 } from 'react-router-dom';
 import API from '../../libs/api';
-import Poll from './poll';
 
 export default function Dashboard() {
     const [polls, setPolls] = useState([]);

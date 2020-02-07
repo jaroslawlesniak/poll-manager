@@ -14,7 +14,6 @@ export default function Poll(props) {
     const [questions, setQestions] = useState([]);
     const [saveButton, setSaveButton] = useState((<Button type="primary" onClick={() => savePollAnswers()}>Zapisz odpowiedzi</Button>));
     const [answers, setAnswers] = useState({});
-    const [user_answers, setUserAnswers] = useState({});
 
     const saveAnswer = (id, answer) => {
         answers[id] = answer;
@@ -41,7 +40,6 @@ export default function Poll(props) {
                             <Button style={{ marginLeft: "15px" }} type="primary">Zobacz wyniki</Button>
                         </Link>
                     </div>));
-                setUserAnswers(data);
             })
     }
 

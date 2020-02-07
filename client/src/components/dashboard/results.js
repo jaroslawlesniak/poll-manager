@@ -26,7 +26,6 @@ export default function Results(props) {
         })
             .then(data => data.json())
             .then(data => {
-                console.log(data);
                 setAnswers(data.answers);
                 
             });

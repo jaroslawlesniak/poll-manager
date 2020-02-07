@@ -36,17 +36,21 @@ export default class Admin extends Component {
                     <Input className="header" value={this.state.selectedPoll.Title} onChange={(event => this.handeTitleChange(event))} />
                     <h2>Pytania</h2>
                     {this.state.questions.map((value, key) => (
-                        <Question key={key} question={value} deleteQuestion={(id) => this.deleteQuestion(key, id)} />
+                        <Question
+                            key={key}
+                            question={value}
+                            deleteQuestion={(id) => this.deleteQuestion(key, id)}
+                            updateQuestionState={(title, info) => this.updateQuestionState(key, title, info)} />
                     ))}
                     <div className="list">
-                        <Radio.Group onChange={(e) => this.addNewQuestion(e.target.value)}>
+                        <Radio.Group>
                             <Tooltip title="Dodaj pytanie">
                                 <Radio.Button><Icon type="plus" /></Radio.Button>
                             </Tooltip>
-                            <Radio.Button value="0">Otwarte</Radio.Button>
-                            <Radio.Button value="1">Tak/Nie</Radio.Button>
-                            <Radio.Button value="2">Jednokrotny wybór</Radio.Button>
-                            <Radio.Button value="3">Wielokrotny wybór</Radio.Button>
+                            <Radio.Button onClick={() => this.addNewQuestion(0)}>Otwarte</Radio.Button>
+                            <Radio.Button onClick={() => this.addNewQuestion(1)}>Tak/Nie</Radio.Button>
+                            <Radio.Button onClick={() => this.addNewQuestion(2)}>Jednokrotny wybór</Radio.Button>
+                            <Radio.Button onClick={() => this.addNewQuestion(3)}>Wielokrotny wybór</Radio.Button>
                         </Radio.Group>
                     </div>
                 </div>
@@ -137,7 +141,7 @@ export default class Admin extends Component {
 
     }
 
-    componentWillMount() {
+    componentDidMount() {
 
         fetch(API.URL + "/polls", {
             method: "GET",
@@ -249,9 +253,12 @@ export default class Admin extends Component {
             mode: "cors"
         })
             .then(data => data.json())
-            .then(data => {
+            .then(async data => {
                 if (data.deleted === true) {
                     let questions = [...this.state.questions];
+                    await this.setState({
+                        questions: []
+                    });
                     questions.splice(key, 1);
                     this.setState({
                         questions: questions
@@ -259,5 +266,13 @@ export default class Admin extends Component {
                     message.success("Usunięto pytanie");
                 }
             })
+    }
+
+    updateQuestionState(key, title, info) {
+        let questions = [...this.state.questions];
+        this.setState({questions: [] });
+        let item = { ...questions[key], Title: title, AdditionalInfo: info }
+        questions[key] = item;
+        this.setState({ questions });
     }
 }
