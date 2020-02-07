@@ -5,13 +5,14 @@ import {
     HashRouter as Router,
     Link
 } from 'react-router-dom';
-import { Button } from 'antd';
+import { Button, Icon } from 'antd';
 
 export default function Poll(props) {
     const id = props.match.params.id;
     const title = props.match.params.title;
 
     const [questions, setQestions] = useState([]);
+    const [saveButton, setSaveButton] = useState((<Button type="primary" onClick={() => savePollAnswers()}>Zapisz odpowiedzi</Button>));
 
     let answers = {};
 
@@ -32,7 +33,8 @@ export default function Poll(props) {
             })
         }).then(data => data.json())
             .then(data => {
-                console.log(answers);
+                console.log("Clicked");
+                setSaveButton((<div className="saved"><Icon type="check-circle"/> Zapisano ankietę</div>));
             })
     }
 
@@ -59,7 +61,7 @@ export default function Poll(props) {
                             <Question data={question} saveAnswer={(id, answer) => saveAnswer(id, answer)} />
                         </div>
                     ))}
-                    <Button type="primary" onClick={() => savePollAnswers()}>Zapisz odpowiedzi</Button>
+                    {saveButton}
                 </div>
             </div>
         </Router>

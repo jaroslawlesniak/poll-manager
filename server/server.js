@@ -129,7 +129,7 @@ app.post('/answer/:id', (request, response) => {
 });
 
 app.post('/user_answers', (request, response) => {
-    const id = request.body.pollID;
+    const id = parseInt(request.body.pollID);
     for (let [key, answer] of Object.entries(request.body.answers)) {
         if (typeof answer === "number") {
             connection.query(`INSERT INTO user_answers VALUES (null, ${id}, ${key}, '', false, ${answer})`);
@@ -146,7 +146,7 @@ app.post('/user_answers', (request, response) => {
             }
         }
     }
-    connection.query(`SELECT ID, PollID, QuestionID, Input, Switch, Ckechbox  FROM user_answers WHERE PollID = ${id}`, (err, rows, fields) => {
+    connection.query(`SELECT ID, QuestionID, Input, Switch, Checkbox FROM user_answers WHERE PollID = ${id}`, (err, rows, fields) => {
         response.send({ "answers": rows || [] });
     });
 });
