@@ -28,6 +28,12 @@ app.get('/polls', (request, response) => {
     });
 });
 
+app.get('/poll/:id', (request, response) => {
+    connection.query(`SELECT ID, Title FROM polls WHERE ID = ${request.params.id}`, (err, rows, fields) => {
+        response.send({ "title": rows[0].Title || "" });
+    });
+});
+
 app.put('/poll', (request, response) => {
     connection.query(`INSERT INTO polls VALUES (null, '${request.body.title}')`, (err, result) => {
         response.send({ "id": result.insertId, "title": request.body.title });
@@ -146,9 +152,34 @@ app.post('/user_answers', (request, response) => {
             }
         }
     }
-    connection.query(`SELECT ID, QuestionID, Input, Switch, Checkbox FROM user_answers WHERE PollID = ${id}`, (err, rows, fields) => {
-        response.send({ "answers": rows || [] });
+    connection.query(`SELECT QuestionID, Input, Switch, Checkbox FROM user_answers WHERE PollID = ${id}`, (err, rows, fields) => {
+        let temp = {};
+        let answers = {};
+        for (let [key, answer] of Object.entries(rows)) {
+            if (temp[answer.QuestionID]) {
+                temp[answer.QuestionID].push({ answer: answer.Input || answer.Switch || answer.Checkbox, amount: 1 });
+            } else {
+                temp[answer.QuestionID] = [{ answer: answer.Input || answer.Switch || answer.Checkbox, amount: 1 }];
+            }
+        }
+        for (let [key, answer] of Object.entries(temp)) {
+            let result = [];
+            answer.forEach(function (a) {
+                if (!this[a.answer]) {
+                    this[a.answer] = { answer: a.answer, amount: 0 };
+                    result.push(this[a.answer]);
+                }
+                this[a.answer].amount += a.amount;
+                
+            }, Object.create(null));
+            answers[key] = result;
+        }
+        response.send({ "answers": answers || [] });
     });
+});
+
+app.get('/results/:id', (request, response) => {
+
 });
 
 app.listen(8080, () => {

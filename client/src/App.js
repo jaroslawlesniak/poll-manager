@@ -8,6 +8,7 @@ import {
 import Dashboard from './components/dashboard/dashboard';
 import Admin from './components/admin/admin';
 import Poll from './components/dashboard/poll';
+import Results from './components/dashboard/results';
 
 export default class App extends React.Component {
     render() {
@@ -16,7 +17,8 @@ export default class App extends React.Component {
                 <Route exact path="/">
                     <Dashboard />
                 </Route>
-                <Route path="/poll/:id/:title" component={Poll}/>
+                <Route exact path="/poll/:id/" component={Poll}/>
+                <Route path="/poll/:id/results" component={Results}/>
                 <Route path="/admin">
                     <Admin />
                 </Route>

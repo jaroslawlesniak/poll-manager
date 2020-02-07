@@ -9,15 +9,15 @@ import { Button, Icon } from 'antd';
 
 export default function Poll(props) {
     const id = props.match.params.id;
-    const title = props.match.params.title;
+    const [title, setTitle] = useState("");
 
     const [questions, setQestions] = useState([]);
     const [saveButton, setSaveButton] = useState((<Button type="primary" onClick={() => savePollAnswers()}>Zapisz odpowiedzi</Button>));
-
-    let answers = {};
+    const [answers, setAnswers] = useState({});
 
     const saveAnswer = (id, answer) => {
         answers[id] = answer;
+        setAnswers(answers);
     }
 
     const savePollAnswers = () => {
@@ -28,13 +28,16 @@ export default function Poll(props) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-               answers,
-               pollID: id
+                answers,
+                pollID: id
             })
         }).then(data => data.json())
             .then(data => {
-                console.log("Clicked");
-                setSaveButton((<div className="saved"><Icon type="check-circle"/> Zapisano ankietę</div>));
+                console.log(data);
+                // setSaveButton((
+                //     <div className="saved">
+                //         <Icon type="check-circle" /> Zapisano ankietę. 
+                //     </div>));
             })
     }
 
@@ -45,7 +48,14 @@ export default function Poll(props) {
             .then(data => data.json())
             .then(data => {
                 setQestions(data.questions);
-            });  
+            });
+        fetch(API.URL + `/poll/${id}`, {
+            method: "GET",
+        })
+            .then(data => data.json())
+            .then(data => {
+                setTitle(data.title);
+            });
     }, []);
 
     return (
@@ -58,7 +68,7 @@ export default function Poll(props) {
                     <h1>{title}</h1>
                     {questions.map((question, key) => (
                         <div key={key} className="question">
-                            <Question data={question} saveAnswer={(id, answer) => saveAnswer(id, answer)} />
+                            <Question user_answers={answers} data={question} saveAnswer={(id, answer) => saveAnswer(id, answer)} />
                         </div>
                     ))}
                     {saveButton}

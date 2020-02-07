@@ -61,6 +61,7 @@ export default class Admin extends Component {
                         <Menu
                             onClick={(event) => this.selectPoll(event)}
                             style={{ width: 250 }}
+                            defaultOpenKeys={['polls']}
                             mode="inline"
                             theme="dark">
                             <SubMenu

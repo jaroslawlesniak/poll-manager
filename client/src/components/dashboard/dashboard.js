@@ -34,7 +34,7 @@ export default function Dashboard() {
                 <div>
                     <h1>Dostępne ankiety</h1>
                     {polls.map((poll, key) => (
-                        <Link key={key} to={`/poll/${poll.ID}/${poll.Title}`}>
+                        <Link key={key} to={`/poll/${poll.ID}`}>
                             <Button icon="edit" size="large">{poll.Title}</Button>
                         </Link>
                     ))}
