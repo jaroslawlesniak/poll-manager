@@ -24,7 +24,7 @@ export default function Question({ data, saveAnswer }) {
                 setAnswers(data.answers);
             });
         if (data.Type === 1) {
-            saveAnswer(data.ID, false);
+            saveAnswer(data.ID, -1);
         }
     }, []);
 
@@ -37,7 +37,7 @@ export default function Question({ data, saveAnswer }) {
     )
 
     if (data.Type === 1) answersBox = (
-        <Switch checkedChildren="Tak" unCheckedChildren="Nie" onChange={selected => saveAnswer(data.ID, selected)} />
+        <Switch checkedChildren="Tak" unCheckedChildren="Nie" onChange={selected => saveAnswer(data.ID, selected - 1)} />
     )
 
     if (data.Type === 2) answersBox = (

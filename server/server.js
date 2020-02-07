@@ -152,7 +152,21 @@ app.post('/user_answers', (request, response) => {
             }
         }
     }
-    connection.query(`SELECT QuestionID, Input, Switch, Checkbox FROM user_answers WHERE PollID = ${id}`, (err, rows, fields) => {
+    response.send({"added": true});
+});
+
+app.get('/results/:id', (request, response) => {
+    let named_answers = {};
+    connection.query(`SELECT ID, Title FROM answers`, (err, rows, fields) => {
+        for(let answer of rows) {
+            named_answers[answer.ID] = answer.Title;
+        }
+    });
+    
+    named_answers[-1] = "Nie";
+    named_answers[0] = "Tak";
+
+    connection.query(`SELECT QuestionID, Input, Switch, Checkbox FROM user_answers WHERE PollID = ${request.params.id}`, (err, rows, fields) => {
         let temp = {};
         let answers = {};
         for (let [key, answer] of Object.entries(rows)) {
@@ -166,20 +180,16 @@ app.post('/user_answers', (request, response) => {
             let result = [];
             answer.forEach(function (a) {
                 if (!this[a.answer]) {
-                    this[a.answer] = { answer: a.answer, amount: 0 };
+                    this[a.answer] = { answer: named_answers[a.answer] || a.answer, amount: 0 };
                     result.push(this[a.answer]);
                 }
                 this[a.answer].amount += a.amount;
-                
+
             }, Object.create(null));
             answers[key] = result;
         }
         response.send({ "answers": answers || [] });
     });
-});
-
-app.get('/results/:id', (request, response) => {
-
 });
 
 app.listen(8080, () => {

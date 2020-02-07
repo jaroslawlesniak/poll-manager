@@ -9,11 +9,12 @@ import { Button, Icon } from 'antd';
 
 export default function Poll(props) {
     const id = props.match.params.id;
-    const [title, setTitle] = useState("");
 
+    const [title, setTitle] = useState("");
     const [questions, setQestions] = useState([]);
     const [saveButton, setSaveButton] = useState((<Button type="primary" onClick={() => savePollAnswers()}>Zapisz odpowiedzi</Button>));
     const [answers, setAnswers] = useState({});
+    const [user_answers, setUserAnswers] = useState({});
 
     const saveAnswer = (id, answer) => {
         answers[id] = answer;
@@ -33,11 +34,14 @@ export default function Poll(props) {
             })
         }).then(data => data.json())
             .then(data => {
-                console.log(data);
-                // setSaveButton((
-                //     <div className="saved">
-                //         <Icon type="check-circle" /> Zapisano ankietę. 
-                //     </div>));
+                setSaveButton((
+                    <div className="saved">
+                        <Icon type="check-circle" /> Zapisano ankietę.
+                        <Link key={1} to={`/poll/${id}/results`}>
+                            <Button style={{ marginLeft: "15px" }} type="primary">Zobacz wyniki</Button>
+                        </Link>
+                    </div>));
+                setUserAnswers(data);
             })
     }
 
@@ -68,7 +72,7 @@ export default function Poll(props) {
                     <h1>{title}</h1>
                     {questions.map((question, key) => (
                         <div key={key} className="question">
-                            <Question user_answers={answers} data={question} saveAnswer={(id, answer) => saveAnswer(id, answer)} />
+                            <Question data={question} saveAnswer={(id, answer) => saveAnswer(id, answer)} />
                         </div>
                     ))}
                     {saveButton}
