@@ -22,7 +22,10 @@ export default function Question({ data, saveAnswer }) {
             .then(data => data.json())
             .then(data => {
                 setAnswers(data.answers);
-            })
+            });
+        if (data.Type === 1) {
+            saveAnswer(data.ID, false);
+        }
     }, []);
 
     let answersBox = "";

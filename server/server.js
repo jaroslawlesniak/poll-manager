@@ -128,6 +128,29 @@ app.post('/answer/:id', (request, response) => {
     })
 });
 
+app.post('/user_answers', (request, response) => {
+    const id = request.body.pollID;
+    for (let [key, answer] of Object.entries(request.body.answers)) {
+        if (typeof answer === "number") {
+            connection.query(`INSERT INTO user_answers VALUES (null, ${id}, ${key}, '', false, ${answer})`);
+        }
+        if (typeof answer === "string") {
+            connection.query(`INSERT INTO user_answers VALUES (null, ${id}, ${key}, '${answer}', false, false)`);
+        }
+        if (typeof answer === "boolean") {
+            connection.query(`INSERT INTO user_answers VALUES (null, ${id}, ${key}, '', ${answer}, false)`);
+        }
+        if (typeof answer === "object") {
+            for (let answerID of answer) {
+                connection.query(`INSERT INTO user_answers VALUES (null, ${id}, ${key}, '', false, ${answerID})`);
+            }
+        }
+    }
+    connection.query(`SELECT ID, PollID, QuestionID, Input, Switch, Ckechbox  FROM user_answers WHERE PollID = ${id}`, (err, rows, fields) => {
+        response.send({ "answers": rows || [] });
+    });
+});
+
 app.listen(8080, () => {
     console.log("Server started!");
 });

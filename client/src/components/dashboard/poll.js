@@ -15,9 +15,25 @@ export default function Poll(props) {
 
     let answers = {};
 
-    const saveAnswer = (key, id, answer) => {
+    const saveAnswer = (id, answer) => {
         answers[id] = answer;
-        console.log(answers);
+    }
+
+    const savePollAnswers = () => {
+        fetch(API.URL + '/user_answers', {
+            method: "POST",
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+               answers,
+               pollID: id
+            })
+        }).then(data => data.json())
+            .then(data => {
+                console.log(answers);
+            })
     }
 
     useEffect(() => {
@@ -27,24 +43,25 @@ export default function Poll(props) {
             .then(data => data.json())
             .then(data => {
                 setQestions(data.questions);
-            })
+            });  
     }, []);
 
     return (
-        <div className="poll-container">
-            <div className="body">
-                <Router>
+        <Router>
+            <div className="poll-container">
+                <div className="body">
                     <Link to="/">
-                        <Button icon="previous" type="primary">Wróć do listy ankiet</Button>
+                        <Button icon="previous" type="ghost" icon="left">Wróć do listy ankiet</Button>
                     </Link>
                     <h1>{title}</h1>
-                </Router>
-                {questions.map((question, key) => (
-                    <div key={key} className="question">
-                        <Question data={question} saveAnswer={(id, answer) => saveAnswer(key, id, answer)}/>
-                    </div>
-                ))}
+                    {questions.map((question, key) => (
+                        <div key={key} className="question">
+                            <Question data={question} saveAnswer={(id, answer) => saveAnswer(id, answer)} />
+                        </div>
+                    ))}
+                    <Button type="primary" onClick={() => savePollAnswers()}>Zapisz odpowiedzi</Button>
+                </div>
             </div>
-        </div>
+        </Router>
     )
 }
